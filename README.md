@@ -1,8 +1,7 @@
 # DRØP — E-Commerce Front-End & UI Design
 
 <br>
-
-> **Projeto em Destaque** 🖤<br>
+ 
 > A **DRØP** é um ensaio de design de interface e e-commerce voltado para a cultura streetwear. A plataforma foi concebida para unir tipografia expressiva, atitude estética e uma experiência de navegação totalmente imersiva.
 
 <br>
