@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <link rel="icon" type="image/png" href="assets/ICON.png" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DRØP — COLLECTIONS</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    .col-hero {
+      margin-top: 65px; position: relative;
+      width: 100%; height: 56vw; max-height: 680px;
+      overflow: hidden; background: #1a1a1a;
+    }
+    .col-hero img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      display: block; filter: brightness(0.78);
+    }
+    .col-hero-fallback { width: 100%; height: 100%; background: #111; }
+    .col-hero-topbar {
+      position: absolute; top: 0; left: 0; right: 0;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.85rem 1.8rem; background: rgba(0,0,0,0.55); z-index: 3;
+    }
+    .col-hero-topbar-left {
+      font-family: var(--font-title); font-size: 0.7rem;
+      font-weight: 700; letter-spacing: 3px; color: #fff; text-transform: uppercase;
+    }
+    .col-hero-topbar-left strong { font-weight: 900; }
+    .col-hero-topbar-right {
+      font-family: var(--font-title); font-size: 0.75rem;
+      font-weight: 900; letter-spacing: 4px; color: #fff;
+    }
+    .col-hero-sale {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      display: flex; justify-content: space-between; align-items: flex-end;
+      padding: 2.5rem; z-index: 3;
+    }
+    .col-hero-sale-word, .col-hero-pct {
+      font-family: var(--font-title);
+      font-size: clamp(5rem, 14vw, 11rem);
+      font-weight: 900; line-height: 1; color: #fff; letter-spacing: -2px;
+    }
+    .col-hero-sale-center {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 0.3rem; padding-bottom: 1.2rem;
+    }
+    .col-hero-upto {
+      font-family: var(--font-title); font-size: 0.65rem;
+      letter-spacing: 6px; color: rgba(255,255,255,0.7);
+      text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,0.4); padding: 0.25rem 0.7rem;
+    }
+
+    .col-marquee {
+      overflow: hidden;
+      border-top: 1px solid #000; border-bottom: 1px solid #000;
+      padding: 0.5rem 0; background: #fff;
+    }
+    .col-marquee-track { display: flex; width: max-content; animation: marquee 24s linear infinite; }
+    .col-marquee-track span {
+      font-family: var(--font-title); font-size: 0.65rem;
+      font-weight: 700; letter-spacing: 4px; text-transform: uppercase;
+      color: #000; padding: 0 2rem; white-space: nowrap;
+    }
+    .col-marquee-track span.sep { color: #bbb; padding: 0; letter-spacing: 0; }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── LAYOUT COM SIDEBAR ── */
+    .col-body { display: flex; min-height: 60vh; }
+
+    .col-sidebar {
+      width: 200px; flex-shrink: 0;
+      border-right: 1px solid #000;
+      padding: 2rem 0;
+      position: sticky; top: 65px;
+      height: calc(100vh - 65px);
+      overflow-y: auto;
+    }
+
+    .sidebar-title {
+      font-family: var(--font-title); font-size: 0.6rem;
+      font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+      color: #aaa; padding: 0 1.5rem 1rem;
+      border-bottom: 1px solid #e8e8e8; margin-bottom: 0.5rem;
+    }
+
+    .sidebar-link {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.65rem 1.5rem;
+      font-family: var(--font-title); font-size: 0.78rem;
+      font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: #888; text-decoration: none; cursor: pointer;
+      border: none; background: none; width: 100%; text-align: left;
+      transition: color 0.15s, background 0.15s;
+    }
+    .sidebar-link:hover { color: #000; background: #f5f5f0; }
+    .sidebar-link.active { color: #000; border-left: 2px solid #000; padding-left: calc(1.5rem - 2px); }
+    .sidebar-link .count {
+      font-size: 0.6rem; font-weight: 400; color: #ccc;
+      background: #f0f0ee; padding: 0.1rem 0.4rem;
+      letter-spacing: 0;
+    }
+    .sidebar-link.active .count { color: #888; background: #e8e8e3; }
+
+    /* ── CONTEÚDO ── */
+    .col-content { flex: 1; min-width: 0; }
+
+    .cat-section { border-bottom: 1px solid #e8e8e8; }
+    .cat-section:last-child { border-bottom: none; }
+
+    .cat-header {
+      display: flex; align-items: baseline; gap: 1rem;
+      padding: 2rem 2rem 1.2rem;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    .cat-header-name {
+      font-family: var(--font-title); font-size: 1.8rem;
+      font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .cat-header-count {
+      font-family: var(--font-title); font-size: 0.65rem;
+      font-weight: 400; letter-spacing: 0.14em; color: #aaa;
+      text-transform: uppercase;
+    }
+
+    .cat-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 0; border-left: 1px solid #e8e8e8;
+    }
+
+    .col-card {
+      cursor: pointer; background: #f2f2f0;
+      border-right: 1px solid #e8e8e8; border-bottom: 1px solid #e8e8e8;
+      display: flex; flex-direction: column;
+    }
+    .col-card:hover .col-card-img { transform: scale(1.03); }
+    .col-card-imgwrap {
+      aspect-ratio: 2/3; overflow: hidden;
+      background: #ebebea;
+    }
+    .col-card-img {
+      width: 100%; height: 100%; object-fit: cover;
+      object-position: top center; display: block;
+      transition: transform 0.5s ease;
+    }
+    .col-card-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-title); font-size: 0.65rem;
+      letter-spacing: 3px; color: #aaa;
+    }
+    .col-card-info { padding: 0.6rem 0.75rem 0.75rem; background: #f2f2f0; }
+    .col-card-name {
+      font-family: var(--font-title); font-size: 0.68rem;
+      font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      color: #111; white-space: nowrap; overflow: hidden;
+      text-overflow: ellipsis; margin-bottom: 0.2rem;
+    }
+    .col-card-price {
+      font-family: var(--font-title); font-size: 0.65rem;
+      font-weight: 400; letter-spacing: 1px; color: #888;
+    }
+
+    .col-empty {
+      padding: 3rem 2rem;
+      font-family: var(--font-title); font-size: 0.72rem;
+      letter-spacing: 3px; color: #ccc; text-transform: uppercase;
+    }
+
+    .col-loading-full {
+      padding: 6rem 2rem; text-align: center;
+      font-family: var(--font-title); font-size: 0.75rem;
+      letter-spacing: 4px; color: #aaa; text-transform: uppercase;
+    }
+
+    .col-footer {
+      border-top: 1px solid #000; padding: 1.8rem 3rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .col-footer-logo { font-family: var(--font-title); font-size: 1.2rem; font-weight: 900; letter-spacing: 4px; }
+    .col-footer-note { font-family: var(--font-title); font-size: 0.65rem; letter-spacing: 3px; color: #999; text-transform: uppercase; }
+
+    .modal-sizes { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0 0.4rem; }
+    .size-btn {
+      font-family: var(--font-title); font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      background: none; border: 1px solid #e0e0e0; color: #999;
+      width: 48px; height: 36px; cursor: pointer; transition: all 0.15s;
+    }
+    .size-btn:hover { border-color: #000; color: #000; }
+    .size-btn.selected { background: #000; color: #fff; border-color: #000; }
+    .modal-size-hint { font-size: 0.72rem; letter-spacing: 2px; color: #bbb; margin-bottom: 0.8rem; min-height: 1rem; }
+    .btn-add:disabled { opacity: 0.3; cursor: not-allowed; }
+    .modal-image img { width: 100%; height: 100%; object-fit: cover; }
+
+    @media (max-width: 1024px) { .cat-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 768px) {
+      .col-sidebar { display: none; }
+      .col-hero { height: 75vw; max-height: none; }
+      .cat-grid { grid-template-columns: repeat(2, 1fr); }
+      .col-hero-sale-word, .col-hero-pct { font-size: clamp(3.5rem, 18vw, 6rem); }
+      .navbar { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .col-footer { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="index.html" class="logo">DRØP</a>
+    <ul class="nav-links">
+      <li><a href="index.html#produtos">NEW IN</a></li>
+      <li><a href="collections.html" style="border-bottom:2px solid #000">COLLECTIONS</a></li>
+      <li><a href="about.html">ABOUT</a></li>
+    </ul>
+    <button class="cart-btn" id="cartBtn">
+      BAG <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </nav>
+
+  <section class="col-hero">
+    <div class="col-hero-topbar">
+      <span class="col-hero-topbar-left"><strong>DRØP SALE:</strong> HOT PICKS, HOTTER DEALS</span>
+      <span class="col-hero-topbar-right">DRØP®</span>
+    </div>
+    <img src="assets/drop3.jpg" alt="DRØP Collection hero"
+      onerror="this.style.display='none'; document.querySelector('.col-hero-fallback').style.display='block'" />
+    <div class="col-hero-fallback" style="display:none;"></div>
+    <div class="col-hero-sale">
+      <span class="col-hero-sale-word">SALE</span>
+      <div class="col-hero-sale-center"><span class="col-hero-upto">U P T O</span></div>
+      <span class="col-hero-pct">20%</span>
+    </div>
+  </section>
+
+  <div class="col-marquee" aria-hidden="true">
+    <div class="col-marquee-track">
+      <span>ALL COLLECTIONS</span><span class="sep"> · </span>
+      <span>FREE SHIPPING OVER R$300</span><span class="sep"> · </span>
+      <span>NEW ARRIVALS WEEKLY</span><span class="sep"> · </span>
+      <span>DRØP SS 2025</span><span class="sep"> · </span>
+      <span>SALE UP TO 20%</span><span class="sep"> · </span>
+      <span>ALL COLLECTIONS</span><span class="sep"> · </span>
+      <span>FREE SHIPPING OVER R$300</span><span class="sep"> · </span>
+      <span>NEW ARRIVALS WEEKLY</span><span class="sep"> · </span>
+      <span>DRØP SS 2025</span><span class="sep"> · </span>
+      <span>SALE UP TO 20%</span><span class="sep"> · </span>
+    </div>
+  </div>
+
+  <div class="col-body">
+    <aside class="col-sidebar" id="sidebar">
+      <div class="sidebar-title">Categorias</div>
+    </aside>
+    <div class="col-content" id="colContent">
+      <div class="col-loading-full">LOADING</div>
+    </div>
+  </div>
+
+  <footer class="col-footer">
+    <span class="col-footer-logo">DRØP</span>
+    <span class="col-footer-note">DRØP.VN</span>
+  </footer>
+
+  <div class="cart-overlay" id="cartOverlay"></div>
+  <aside class="cart" id="cart">
+    <div class="cart-header"><h3>BAG</h3><button id="closeCart">✕</button></div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer">
+      <p>TOTAL <span id="cartTotal">R$ 0,00</span></p>
+      <button class="btn-checkout" id="checkoutBtn">CHECKOUT</button>
+    </div>
+  </aside>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modal">
+      <button class="modal-close" id="modalClose">✕</button>
+      <div class="modal-image" id="modalImage"></div>
+      <div class="modal-info">
+        <p class="modal-tag">DRØP EXCLUSIVE</p>
+        <h2 class="modal-name" id="modalName"></h2>
+        <p class="modal-desc" id="modalDesc"></p>
+        <p class="modal-price" id="modalPrice"></p>
+        <p class="modal-stock" id="modalStock"></p>
+        <div class="modal-sizes" id="modalSizes"></div>
+        <p class="modal-size-hint" id="modalSizeHint"></p>
+        <button class="btn-add modal-add" id="modalAdd" disabled>ADD TO BAG</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  const API = 'http://localhost:8001';
+const CART_KEY = 'drop_cart';
+const CATEGORIES = ['TOPS', 'OUTWEAR', 'BOTTOMS', 'FOOTWEAR', 'ACCESSORIES', 'COLLAB', 'SALE'];
+
+let cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+function saveCart() { localStorage.setItem(CART_KEY, JSON.stringify(cart)); }
+
+async function checkDeepLink() {
+  const id = new URLSearchParams(window.location.search).get('produto');
+  if (!id) return;
+  try {
+    const res = await fetch(`${API}/products/${id}`);
+    const p = await res.json();
+    openModal(p);
+  } catch {}
+}
+
+async function loadProducts() {
+  try {
+    const res = await fetch(`${API}/products/`);
+    const products = await res.json();
+    renderAll(products);
+    checkDeepLink(); // ← aqui, depois de renderizar tudo
+  } catch {
+    document.getElementById('colContent').innerHTML =
+      '<div class="col-loading-full">Erro ao carregar. API está rodando?</div>';
+  }
+}
+
+    function renderAll(products) {
+      const grouped = {};
+      CATEGORIES.forEach(c => grouped[c] = []);
+
+      products.forEach(p => {
+        const cat = (p.category || '').toUpperCase();
+        if (grouped[cat]) grouped[cat].push(p);
+        else {
+          if (!grouped['OUTROS']) grouped['OUTROS'] = [];
+          grouped['OUTROS'].push(p);
+        }
+      });
+
+      const activeCats = CATEGORIES.filter(c => grouped[c] && grouped[c].length > 0);
+      if (grouped['OUTROS'] && grouped['OUTROS'].length) activeCats.push('OUTROS');
+
+      renderSidebar(activeCats, grouped);
+      renderSections(activeCats, grouped);
+    }
+
+    function renderSidebar(cats, grouped) {
+      const sidebar = document.getElementById('sidebar');
+      const links = cats.map(c => `
+        <button class="sidebar-link" onclick="scrollToSection('${c}')" id="link-${c}">
+          ${c}
+          <span class="count">${grouped[c].length}</span>
+        </button>
+      `).join('');
+      sidebar.innerHTML = `<div class="sidebar-title">Categorias</div>${links}`;
+
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          const id = e.target.id.replace('section-', '');
+          const link = document.getElementById(`link-${id}`);
+          if (link) link.classList.toggle('active', e.isIntersecting);
+        });
+      }, { threshold: 0.2 });
+
+      cats.forEach(c => {
+        const el = document.getElementById(`section-${c}`);
+        if (el) observer.observe(el);
+      });
+    }
+
+    function renderSections(cats, grouped) {
+      const content = document.getElementById('colContent');
+      if (!cats.length) {
+        content.innerHTML = '<div class="col-loading-full">Nenhum produto encontrado.</div>';
+        return;
+      }
+      content.innerHTML = cats.map(c => `
+        <section class="cat-section" id="section-${c}">
+          <div class="cat-header">
+            <span class="cat-header-name">${c}</span>
+            <span class="cat-header-count">${grouped[c].length} ${grouped[c].length === 1 ? 'peça' : 'peças'}</span>
+          </div>
+          <div class="cat-grid">
+            ${grouped[c].map(p => `
+              <div class="col-card" onclick="openModal(${JSON.stringify(p).replace(/"/g, '&quot;')})">
+                <div class="col-card-imgwrap">
+                  ${p.image_url
+                    ? `<img class="col-card-img" src="${p.image_url}" alt="${p.name}" loading="lazy"/>`
+                    : `<div class="col-card-placeholder">DRØP</div>`}
+                </div>
+                <div class="col-card-info">
+                  <p class="col-card-name">${p.name}</p>
+                  <p class="col-card-price">R$ ${p.price.toFixed(2).replace('.', ',')}</p>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+      `).join('');
+
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          const id = e.target.id.replace('section-', '');
+          const link = document.getElementById(`link-${id}`);
+          if (link) link.classList.toggle('active', e.isIntersecting);
+        });
+      }, { threshold: 0.2 });
+
+      cats.forEach(c => {
+        const el = document.getElementById(`section-${c}`);
+        if (el) observer.observe(el);
+      });
+    }
+
+    function scrollToSection(cat) {
+      const el = document.getElementById(`section-${cat}`);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function openModal(p) {
+      const imgs = [];
+      if (p.images && p.images.length > 0) p.images.slice(0, 3).forEach(i => imgs.push(i));
+      else {
+        if (p.image_url) imgs.push(p.image_url);
+        if (p.image_product) imgs.push(p.image_product);
+      }
+      let current = 0;
+      function renderCarousel() {
+        const imgWrap = document.getElementById('modalImage');
+        imgWrap.innerHTML = imgs.length
+          ? `<div style="position:relative;width:100%;height:100%;">
+              <img src="${imgs[current]}" alt="" style="width:100%;height:100%;object-fit:cover;display:block;"/>
+              ${imgs.length > 1 ? `
+                <button id="prevImgBtn" style="position:absolute;left:0.8rem;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.85);border:none;width:36px;height:36px;font-size:1.1rem;cursor:pointer;">‹</button>
+                <button id="nextImgBtn" style="position:absolute;right:0.8rem;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.85);border:none;width:36px;height:36px;font-size:1.1rem;cursor:pointer;">›</button>
+                <div style="position:absolute;bottom:0.8rem;left:50%;transform:translateX(-50%);display:flex;gap:0.4rem;">
+                  ${imgs.map((_, i) => `<span style="width:6px;height:6px;border-radius:50%;background:${i===current?'#000':'#ccc'};display:inline-block;"></span>`).join('')}
+                </div>` : ''}
+            </div>`
+          : `<div class="modal-placeholder"></div>`;
+        if (imgs.length > 1) {
+          document.getElementById('prevImgBtn').addEventListener('click', e => { e.stopPropagation(); current = (current - 1 + imgs.length) % imgs.length; renderCarousel(); });
+          document.getElementById('nextImgBtn').addEventListener('click', e => { e.stopPropagation(); current = (current + 1) % imgs.length; renderCarousel(); });
+        }
+      }
+      renderCarousel();
+      document.getElementById('modalName').textContent = p.name;
+      document.getElementById('modalDesc').textContent = p.description;
+      document.getElementById('modalPrice').textContent = `R$ ${p.price.toFixed(2).replace('.', ',')}`;
+      document.getElementById('modalStock').textContent = `${p.stock} unidades disponíveis`;
+      const sizesWrap = document.getElementById('modalSizes');
+      const hint = document.getElementById('modalSizeHint');
+      const addBtn = document.getElementById('modalAdd');
+      let selectedSize = null;
+      if (p.sizes && p.sizes.length > 0) {
+        sizesWrap.innerHTML = p.sizes.map(s => `<button class="size-btn" data-size="${s}">${s}</button>`).join('');
+        sizesWrap.querySelectorAll('.size-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            sizesWrap.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedSize = btn.dataset.size;
+            hint.textContent = `Tamanho: ${selectedSize}`;
+            addBtn.disabled = false;
+          });
+        });
+        addBtn.disabled = true;
+        hint.textContent = 'Selecione um tamanho';
+      } else {
+        sizesWrap.innerHTML = ''; hint.textContent = '';
+        addBtn.disabled = false; selectedSize = 'ÚNICO';
+      }
+      addBtn.onclick = () => { addToCart(p, selectedSize); closeModal(); };
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+    document.getElementById('modalClose').onclick = closeModal;
+    document.getElementById('modalOverlay').onclick = e => { if (e.target === e.currentTarget) closeModal(); };
+
+    function addToCart(p, size) {
+      const key = `${p.id}_${size}`;
+      const existing = cart.find(i => i._key === key);
+      if (existing) { existing.qty++; existing.quantity = existing.qty; }
+      else cart.push({ ...p, image: p.image_url || p.image_product || '', qty: 1, quantity: 1, size, _key: key });
+      saveCart(); updateCart(); openCart();
+    }
+
+    function updateCart() {
+      const count = cart.reduce((s, i) => s + i.qty, 0);
+      const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+      document.getElementById('cartCount').textContent = count;
+      document.getElementById('cartTotal').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+      document.getElementById('cartItems').innerHTML = cart.length
+        ? cart.map(i => `
+            <div class="cart-item">
+              <div class="cart-item-info">
+                <p class="cart-item-name">${i.name}${i.size && i.size !== 'ÚNICO' ? ` <span style="font-weight:400;color:#aaa">/ ${i.size}</span>` : ''}</p>
+                <p class="cart-item-price">R$ ${(i.price * i.qty).toFixed(2).replace('.', ',')}</p>
+              </div>
+              <div class="cart-item-controls">
+                <button onclick="changeQty('${i._key}', -1)">−</button>
+                <span>${i.qty}</span>
+                <button onclick="changeQty('${i._key}', 1)">+</button>
+              </div>
+            </div>`).join('')
+        : '<p style="color:#999;font-size:.85rem;letter-spacing:2px;">Seu bag está vazio.</p>';
+    }
+
+    function changeQty(key, delta) {
+      const item = cart.find(i => i._key === key);
+      if (!item) return;
+      item.qty += delta; item.quantity = item.qty;
+      if (item.qty <= 0) cart = cart.filter(i => i._key !== key);
+      saveCart(); updateCart();
+    }
+
+    function openCart() {
+      document.getElementById('cart').classList.add('active');
+      document.getElementById('cartOverlay').classList.add('active');
+    }
+    function closeCart() {
+      document.getElementById('cart').classList.remove('active');
+      document.getElementById('cartOverlay').classList.remove('active');
+    }
+
+    document.getElementById('cartBtn').onclick = openCart;
+    document.getElementById('closeCart').onclick = closeCart;
+    document.getElementById('cartOverlay').onclick = closeCart;
+    document.getElementById('checkoutBtn').onclick = () => {
+      if (!cart.length) return;
+      closeCart(); window.location.href = 'checkout.html';
+    };
+
+    updateCart();
+    loadProducts();
+  </script>
+</body>
+</html>

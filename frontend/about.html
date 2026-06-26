@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <link rel="icon" type="image/png" href="/frontend/assets/ICON.png" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DRØP — About</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      background-color: #ffffff; 
+      color: #0a0a0a;
+    }
+
+    .navbar {
+      border-bottom: 1px solid #0a0a0a;
+    }
+
+    .about-container {
+      max-width: 1000px;
+      margin: 8rem auto 4rem auto;
+      padding: 0 2rem;
+    }
+
+    .about-header {
+      margin-bottom: 4rem;
+      border-bottom: 2px solid #0a0a0a;
+      padding-bottom: 2rem;
+    }
+
+    .about-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 4.5rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 0.95;
+      letter-spacing: 1px;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .about-text h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 2rem;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .about-text p {
+      font-family: 'Barlow', sans-serif;
+      font-weight: 400;
+      font-size: 1.25rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      color: #333;
+    }
+
+    .about-text strong {
+      font-weight: 600;
+      color: #0a0a0a;
+    }
+
+    .credits-box {
+      border: 1px solid #0a0a0a;
+      padding: 2.5rem;
+      background: #fafafa;
+    }
+
+    .credits-box h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid #0a0a0a;
+      padding-bottom: 0.5rem;
+    }
+
+    .credits-box ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    .credits-box ul li {
+      font-family: 'Barlow', sans-serif;
+      font-size: 1.1rem;
+      margin-bottom: 0.8rem;
+      color: #555;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .credits-box ul li strong {
+      color: #0a0a0a;
+      font-weight: 600;
+    }
+
+    .social-links {
+      margin-top: 3rem;
+      border-top: 1px solid #0a0a0a;
+      padding-top: 2rem;
+    }
+
+    .social-links h4 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 1rem;
+    }
+
+    .social-links .links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .social-links a {
+      font-family: 'Barlow', sans-serif;
+      font-size: 1.15rem;
+      color: #0a0a0a;
+      text-decoration: underline;
+      font-weight: 500;
+    }
+
+    .social-links a:hover {
+      color: #555;
+    }
+
+    @media (max-width: 768px) {
+      .about-grid {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+      .about-title {
+        font-size: 3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="index.html" class="logo">DRØP</a>
+    <ul class="nav-links">
+      <li><a href="index.html#produtos">NEW IN</a></li>
+      <li><a href="collections.html">COLLECTIONS</a></li>
+      <li><a href="about.html">ABOUT</a></li>
+    </ul>
+    <button class="cart-btn" id="cartBtn">
+      BAG <span class="cart-count" id="cartCount">0</span> 
+    </button>
+  </nav>
+
+  <main class="about-container">
+    <div class="about-header">
+      <h1 class="about-title">Behind the Code <br>& The Vision</h1>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-text">
+        <h2>A criadora</h2>
+        <p>Olá, eu sou a <strong>Adriane</strong>. Muito além de um e-commerce de streetwear, o projeto <strong>DRØP</strong> nasceu da minha profunda paixão pelo desenvolvimento Front-End e pela criação de experiências digitais imersivas, limpas e funcionais.</p>
+        
+        <p>Sempre fui fascinada pela intersecção entre design urbano e código. A ideia de construir essa vitrine virtual surgiu da vontade de entregar algo fora do óbvio — um espaço na web que respira a mesma atitude, presença e autenticidade de grandes editoriais de moda.</p>
+        
+        <p>Vale ressaltar que esta plataforma é <strong>interinamente e puramente visual</strong>. Ela foi concebida como um ensaio de design e interface, unindo tipografia expressiva e atitude estética. No entanto, por baixo de toda essa identidade editorial, residem mecânicas, fluxos e estruturas arquitetadas com potencial real para ganharem vida em um ambiente de produção comercial funcional.</p>
+
+        <p>Todo o conceito visual e as diretrizes de navegação foram retirados e adaptados de profundas <strong>inspirações</strong> do universo digital, compilando referências estéticas e comportamentais para criar uma identidade única.</p>
+      </div>
+
+      <div class="credits-box">
+        <h3>Agradecimentos</h3>
+        <p>Construir e estruturar essa vitrine exigiu as ferramentas certas. Agradeço e dou os devidos créditos às tecnologias e fontes de inspiração que tornaram tudo isso possível:</p>
+        <br>
+        <ul>
+          <li><strong>Backend:</strong> FastAPI (Python)</li>
+          <li><strong>Database:</strong> Firebase Firestore</li>
+          <li><strong>AI Assistant:</strong> Claude</li>
+          <li><strong>Inspiração / UI:</strong> Pinterest</li>
+          <li><strong>Assets / Imagens:</strong> Unsplash</li>
+        </ul>
+
+        <div class="social-links">
+          <h4>Conecte-se comigo</h4>
+          <div class="links">
+            <a href="https://www.linkedin.com/in/adriane-bernardo/" target="_blank">LinkedIn</a>
+            <a href="https://github.com/adrianebernardo" target="_blank">GitHub</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

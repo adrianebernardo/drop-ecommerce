@@ -1,0 +1,20 @@
+# Firebase
+backend/serviceAccountKey.json
+
+# Variáveis de ambiente
+.env
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# VS Code
+.vscode/
+
+# Credenciais, senhas e variáveis de ambiente
+.env
+*.json
+firebaseConfig.js
+backend/config.js

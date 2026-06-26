@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <link rel="icon" type="image/png" href="assets/ICON.png" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DRØP — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --black: #0a0a0a; --white: #f5f5f0;
+      --gray-light: #e8e8e3; --gray-mid: #b0b0a8; --gray-dark: #3a3a38;
+      --font: 'Barlow Condensed', sans-serif;
+    }
+    body { font-family: var(--font); background: var(--white); color: var(--black); min-height: 100vh; }
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 56px;
+      background: var(--black); color: var(--white);
+    }
+    .nav-logo { font-size: 1.4rem; font-weight: 900; letter-spacing: 0.12em; }
+    .nav-tag { font-size: 0.7rem; letter-spacing: 0.2em; color: var(--gray-mid); text-transform: uppercase; }
+    .container { max-width: 900px; margin: 0 auto; padding: 2.5rem 2rem; }
+    .page-title {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--gray-mid);
+      border-bottom: 1px solid var(--black); padding-bottom: 0.8rem; margin-bottom: 2rem;
+    }
+    .toast {
+      display: none; position: fixed; top: 1.5rem; right: 1.5rem;
+      background: var(--black); color: var(--white);
+      font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 0.8rem 1.4rem; z-index: 999;
+    }
+    .toast.visible { display: block; }
+    .toast.error { background: #c0392b; }
+    .product-row {
+      display: grid; grid-template-columns: 48px 1fr 200px 100px;
+      gap: 1rem; align-items: center;
+      padding: 0.8rem 0; border-bottom: 1px solid var(--gray-light);
+    }
+    .product-row:last-child { border-bottom: none; }
+    .product-img {
+      width: 48px; height: 60px; object-fit: cover;
+      background: var(--gray-light); display: block;
+    }
+    .product-name {
+      font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.2;
+    }
+    .product-id {
+      font-size: 0.6rem; letter-spacing: 0.08em;
+      color: var(--gray-mid); margin-top: 0.2rem;
+    }
+    .cat-select {
+      font-family: var(--font); font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      background: transparent; border: 1px solid var(--gray-light);
+      color: var(--black); padding: 0.4rem 0.6rem; cursor: pointer;
+      width: 100%; outline: none; transition: border-color 0.15s;
+    }
+    .cat-select:focus { border-color: var(--black); }
+    .save-btn {
+      font-family: var(--font); font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      background: var(--black); color: var(--white);
+      border: none; padding: 0.5rem 1rem; cursor: pointer;
+      transition: opacity 0.15s; white-space: nowrap;
+    }
+    .save-btn:hover { opacity: 0.75; }
+    .save-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .save-btn.saved { background: #2a7a2a; }
+    .loading-state {
+      text-align: center; padding: 4rem 0;
+      font-size: 0.72rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--gray-mid);
+    }
+    .save-all-bar {
+      display: flex; justify-content: flex-end; margin-bottom: 1.5rem;
+    }
+    .save-all-btn {
+      font-family: var(--font); font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      background: transparent; color: var(--black);
+      border: 1px solid var(--black); padding: 0.6rem 1.6rem; cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .save-all-btn:hover { background: var(--black); color: var(--white); }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <span class="nav-logo">DRØP</span>
+  <span class="nav-tag">Admin — Categorias</span>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<div class="container">
+  <div class="page-title">Gerenciar categorias dos produtos</div>
+
+  <div class="save-all-bar">
+    <button class="save-all-btn" id="saveAllBtn">Salvar todos</button>
+  </div>
+
+  <div id="productList">
+    <div class="loading-state">Carregando produtos...</div>
+  </div>
+</div>
+
+<script>
+  const API = 'http://localhost:8001';
+  const CATEGORIES = ['TOPS', 'OUTWEAR', 'BOTTOMS', 'FOOTWEAR', 'ACCESSORIES', 'COLLAB', 'SALE'];
+
+  let products = [];
+
+  function showToast(msg, error = false) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast visible' + (error ? ' error' : '');
+    setTimeout(() => t.className = 'toast', 2500);
+  }
+
+  async function loadProducts() {
+    try {
+      const res = await fetch(`${API}/products/`);
+      products = await res.json();
+      renderList();
+    } catch {
+      document.getElementById('productList').innerHTML =
+        '<div class="loading-state">Erro ao carregar. API está rodando?</div>';
+    }
+  }
+
+  function renderList() {
+    const list = document.getElementById('productList');
+    if (!products.length) {
+      list.innerHTML = '<div class="loading-state">Nenhum produto encontrado.</div>';
+      return;
+    }
+    list.innerHTML = products.map((p, i) => `
+      <div class="product-row" data-index="${i}">
+        <img class="product-img"
+          src="${p.image_url || p.image_product || ''}"
+          alt="${p.name}"
+          onerror="this.style.opacity='0'"
+        />
+        <div>
+          <div class="product-name">${p.name}</div>
+          <div class="product-id">${p.id}</div>
+        </div>
+        <select class="cat-select" id="cat-${i}">
+          ${CATEGORIES.map(c => `
+            <option value="${c}" ${p.category === c ? 'selected' : ''}>${c}</option>
+          `).join('')}
+        </select>
+        <button class="save-btn" id="btn-${i}" onclick="saveOne(${i})">Salvar</button>
+      </div>
+    `).join('');
+  }
+
+  async function saveOne(i) {
+    const p = products[i];
+    const cat = document.getElementById(`cat-${i}`).value;
+    const btn = document.getElementById(`btn-${i}`);
+    btn.disabled = true;
+    btn.textContent = '...';
+    try {
+      const res = await fetch(`${API}/products/${p.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category: cat })
+      });
+      if (!res.ok) throw new Error();
+      products[i].category = cat;
+      btn.textContent = '✓';
+      btn.classList.add('saved');
+      setTimeout(() => {
+        btn.textContent = 'Salvar';
+        btn.classList.remove('saved');
+        btn.disabled = false;
+      }, 2000);
+      showToast(`${p.name} atualizado`);
+    } catch {
+      btn.textContent = 'Erro';
+      btn.disabled = false;
+      showToast('Erro ao salvar', true);
+    }
+  }
+
+  document.getElementById('saveAllBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('saveAllBtn');
+    btn.disabled = true;
+    btn.textContent = 'Salvando...';
+    let errors = 0;
+    for (let i = 0; i < products.length; i++) {
+      const cat = document.getElementById(`cat-${i}`).value;
+      try {
+        const res = await fetch(`${API}/products/${products[i].id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ category: cat })
+        });
+        if (!res.ok) throw new Error();
+        products[i].category = cat;
+        const b = document.getElementById(`btn-${i}`);
+        b.textContent = '✓'; b.classList.add('saved');
+      } catch { errors++; }
+    }
+    btn.textContent = 'Salvar todos';
+    btn.disabled = false;
+    showToast(errors ? `${errors} erro(s) ao salvar` : 'Todos salvos!', errors > 0);
+  });
+
+  loadProducts();
+</script>
+</body>
+</html>

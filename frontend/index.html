@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <link rel="icon" type="image/png" href="/frontend/assets/ICON.png" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DRØP</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="#" class="logo">DRØP</a>
+    <ul class="nav-links">
+      <li><a href="index.html#produtos">NEW IN</a></li>
+      <li><a href="collections.html">COLLECTIONS</a></li>
+      <li><a href="about.html">ABOUT</a></li>
+    </ul>
+    <button class="cart-btn" id="cartBtn">
+      BAG <span class="cart-count" id="cartCount">0</span> 
+    </button>
+  </nav>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-number">01</div>
+  <div class="hero-text">
+    <h1 class="hero-title">DRØP</h1>
+    <p class="hero-sub">— New Collection</p>
+  </div>
+  <div class="hero-image-main">
+    <div class="hero-placeholder"></div>
+  </div>
+  <div class="hero-image-second">
+    <div class="hero-placeholder-second"></div>
+  </div>
+  <a href="collections.html?produto=fV8CvJ6wJcdyc7ZbU56b" class="hero-image-float" style="text-decoration:none;color:var(--black);display:block;">
+    <div class="hero-placeholder-sm"></div>
+    <p class="hero-label">Latest Drop <br/><strong>VIEW MORE</strong></p>
+  </a>
+  <p class="hero-scroll">— Scroll and explore</p>
+</section>
+
+<!-- NEW IN — BEHIND THE SCENES -->
+<section class="newin" id="produtos">
+
+  <div class="newin-header">
+    <h2>NEW IN</h2>
+    <span>— Behind the scenes</span>
+  </div>
+
+  <!-- FEATURE 01 -->
+  <div class="newin-feature">
+    <div class="newin-img">
+      <img src="assets/fotog1.jpg" alt="DRØP Behind the Scenes" />
+    </div>
+    <div class="newin-text">
+      <span class="newin-label">01 — The Process</span>
+      <h3 class="newin-title">Nothing here is accidental.</h3>
+      <p class="newin-body">
+        Every DRØP piece begins long before the camera turns on. It starts in conversations — between designers who refuse to design for a single body type, between stylists who believe clothing should move with people, not against them. Our process is slow and intentional. Fabrics are chosen for how they feel at 6am and midnight. Silhouettes are tested on real bodies across every size and identity.
+        <br/><br/>
+        On set, nothing is posed for perfection. Our photographers are trained to chase the real — the exhale between shots, the laugh that wasn't planned, the way light hits someone who finally feels seen in what they're wearing. We don't retouch what makes people human.
+      </p>
+      <span class="newin-credit">Photography · Art Direction · DRØP Studio</span>
+    </div>
+  </div>
+
+  <!-- FEATURE 02 -->
+  <div class="newin-feature newin-feature--reverse">
+    <div class="newin-img">
+      <img src="assets/fotog2.jpg" alt="DRØP Collaborators" />
+    </div>
+    <div class="newin-text">
+      <span class="newin-label">02 — The People</span>
+      <h3 class="newin-title">Built by those who live it.</h3>
+      <p class="newin-body">
+        DRØP doesn't work with models. It works with people. Our collaborators — the makeup artists who enhance without erasing, the filmmakers who document without distorting, the producers who hold every detail together behind the scenes — they aren't hired hands. They are the brand.
+        <br/><br/>
+        Each collection is the result of a collective effort from a diverse, passionate creative team that believes in the same thing: that fashion should belong to everyone. No gatekeeping. No standard. Just craft, care, and the relentless pursuit of making something that feels true.
+        <br/><br/>
+        This is what DRØP looks like from the inside. Raw, collaborative, and built with intention — drop by drop.
+      </p>
+      <span class="newin-credit">Styling · Production · Creative Direction · DRØP Collective</span>
+    </div>
+  </div>
+
+</section>
+
+  <!-- CARRINHO LATERAL -->
+  <div class="cart-overlay" id="cartOverlay"></div>
+  <aside class="cart" id="cart">
+    <div class="cart-header">
+      <h3>BAG</h3>
+      <button id="closeCart">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer">
+      <p>TOTAL <span id="cartTotal">R$ 0,00</span></p>
+      <button class="btn-checkout" id="checkoutBtn">CHECKOUT</button>
+    </div>
+  </aside>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modal">
+      <button class="modal-close" id="modalClose">✕</button>
+      <div class="modal-image" id="modalImage">
+        <div class="modal-placeholder"></div>
+      </div>
+      <div class="modal-info">
+        <p class="modal-tag">DRØP EXCLUSIVE</p>
+        <h2 class="modal-name" id="modalName"></h2>
+        <p class="modal-desc" id="modalDesc"></p>
+        <p class="modal-price" id="modalPrice"></p>
+        <p class="modal-stock" id="modalStock"></p>
+        <div class="modal-sizes" id="modalSizes"></div>
+        <p class="modal-size-hint" id="modalSizeHint"></p>
+        <button class="btn-add modal-add" id="modalAdd" disabled>ADD TO BAG</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
