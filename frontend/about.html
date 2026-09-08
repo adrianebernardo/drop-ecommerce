@@ -5,11 +5,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DRØP — About</title>
+
   <link rel="stylesheet" href="style.css" />
+
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
+
   <style>
     body {
-      background-color: #ffffff; 
+      background-color: #ffffff;
       color: #0a0a0a;
     }
 
@@ -84,6 +87,13 @@
       padding-bottom: 0.5rem;
     }
 
+    .credits-box p {
+      font-family: 'Barlow', sans-serif;
+      font-size: 1.1rem;
+      line-height: 1.5;
+      color: #555;
+    }
+
     .credits-box ul {
       list-style-type: none;
       padding-left: 0;
@@ -96,6 +106,7 @@
       color: #555;
       display: flex;
       justify-content: space-between;
+      gap: 1rem;
     }
 
     .credits-box ul li strong {
@@ -139,16 +150,19 @@
         grid-template-columns: 1fr;
         gap: 3rem;
       }
+
       .about-title {
         font-size: 3rem;
       }
     }
   </style>
 </head>
+
 <body>
 
   <nav class="navbar">
     <a href="index.html" class="logo">DRØP</a>
+
     <ul class="nav-links">
       <li><a href="index.html#produtos">NEW IN</a></li>
       <li><a href="collections.html">COLLECTIONS</a></li>
@@ -156,46 +170,132 @@
     </ul>
   </nav>
 
+
   <main class="about-container">
+
     <div class="about-header">
-      <h1 class="about-title">Behind the Code <br>& The Vision</h1>
+      <h1 class="about-title">
+        Behind the Code <br>& The Vision
+      </h1>
     </div>
+
 
     <div class="about-grid">
-      <div class="about-text">
-        <h2>A criadora</h2>
-        <p>Olá, eu sou a <strong>Adriane</strong>. Muito além de um e-commerce de streetwear, o projeto <strong>DRØP</strong> nasceu da minha profunda paixão pelo desenvolvimento Front-End e pela criação de experiências digitais imersivas, limpas e funcionais.</p>
-        
-        <p>Sempre fui fascinada pela intersecção entre design urbano e código. A ideia de construir essa vitrine virtual surgiu da vontade de entregar algo fora do óbvio — um espaço na web que respira a mesma atitude, presença e autenticidade de grandes editoriais de moda.</p>
-        
-        <p>Vale ressaltar que esta plataforma é <strong>interinamente e puramente visual</strong>. Ela foi concebida como um ensaio de design e interface, unindo tipografia expressiva e atitude estética. No entanto, por baixo de toda essa identidade editorial, residem mecânicas, fluxos e estruturas arquitetadas com potencial real para ganharem vida em um ambiente de produção comercial funcional.</p>
 
-        <p>Todo o conceito visual e as diretrizes de navegação foram retirados e adaptados de profundas <strong>inspirações</strong> do universo digital, compilando referências estéticas e comportamentais para criar uma identidade única.</p>
+      <div class="about-text">
+
+        <h2>A criadora</h2>
+
+        <p>
+          Olá, eu sou a <strong>Adriane</strong>. Muito além de um e-commerce
+          de streetwear, o projeto <strong>DRØP</strong> nasceu da minha
+          paixão pelo desenvolvimento Front-End e pela criação de experiências
+          digitais imersivas, limpas e funcionais.
+        </p>
+
+        <p>
+          Sempre fui fascinada pela intersecção entre design urbano e código.
+          A ideia de construir essa vitrine virtual surgiu da vontade de
+          entregar algo fora do óbvio — um espaço na web que respira a mesma
+          atitude, presença e autenticidade de grandes editoriais de moda.
+        </p>
+
+        <p>
+          O <strong>DRØP</strong> foi desenvolvido como um projeto acadêmico,
+          mas vai além de uma simples demonstração visual. A plataforma conta
+          com um <strong>backend desenvolvido em FastAPI e Python</strong>,
+          responsável pela comunicação entre a interface e os dados da
+          aplicação, além de um <strong>banco de dados SQLite</strong> para
+          armazenar informações de produtos e pedidos.
+        </p>
+
+        <p>
+          Dessa forma, o projeto une uma identidade visual marcante com uma
+          estrutura funcional, permitindo trabalhar não apenas a parte de
+          design e experiência do usuário, mas também conceitos de
+          desenvolvimento, integração entre sistemas e persistência de dados.
+        </p>
+
+        <p>
+          Todo o conceito visual e as diretrizes de navegação foram construídos
+          a partir de diferentes <strong>inspirações</strong> do universo
+          digital e da moda urbana, reunindo referências estéticas e
+          comportamentais para criar uma identidade própria para o DRØP.
+        </p>
+
       </div>
+
 
       <div class="credits-box">
+
         <h3>Agradecimentos</h3>
-        <p>Construir e estruturar essa vitrine exigiu as ferramentas certas. Agradeço e dou os devidos créditos às tecnologias e fontes de inspiração que tornaram tudo isso possível:</p>
+
+        <p>
+          Construir e estruturar essa plataforma exigiu diferentes ferramentas
+          e referências. Agradeço e dou os devidos créditos às tecnologias e
+          fontes de inspiração que contribuíram para tornar o projeto possível:
+        </p>
+
         <br>
+
         <ul>
-          <li><strong>Backend:</strong> FastAPI (Python)</li>
-          <li><strong>Database:</strong> Firebase Firestore</li>
-          <li><strong>AI Assistant:</strong> Claude</li>
-          <li><strong>Inspiração / UI:</strong> Pinterest</li>
-          <li><strong>Assets / Imagens:</strong> Unsplash</li>
+          <li>
+            <strong>Backend:</strong>
+            <span>FastAPI (Python)</span>
+          </li>
+
+          <li>
+            <strong>Database:</strong>
+            <span>SQLite</span>
+          </li>
+
+          <li>
+            <strong>AI Assistant:</strong>
+            <span>Claude</span>
+          </li>
+
+          <li>
+            <strong>Inspiração / UI:</strong>
+            <span>Pinterest</span>
+          </li>
+
+          <li>
+            <strong>Assets / Imagens:</strong>
+            <span>Unsplash</span>
+          </li>
         </ul>
 
+
         <div class="social-links">
+
           <h4>Conecte-se comigo</h4>
+
           <div class="links">
-            <a href="https://www.linkedin.com/in/adriane-bernardo/" target="_blank">LinkedIn</a>
-            <a href="https://github.com/adrianebernardo" target="_blank">GitHub</a>
+            <a
+              href="https://www.linkedin.com/in/adriane-bernardo/"
+              target="_blank"
+            >
+              LinkedIn
+            </a>
+
+            <a
+              href="https://github.com/adrianebernardo"
+              target="_blank"
+            >
+              GitHub
+            </a>
           </div>
+
         </div>
+
       </div>
+
     </div>
+
   </main>
 
+
   <script src="app.js"></script>
+
 </body>
 </html>
