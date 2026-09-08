@@ -1,61 +1,136 @@
-# DRØP — E-Commerce Front-End & UI Design
+# DRØP — E-Commerce Streetwear 🖤
 
-<br>
- 
-> A **DRØP** é um ensaio de design de interface e e-commerce voltado para a cultura streetwear. A plataforma foi concebida para unir tipografia expressiva, atitude estética e uma experiência de navegação totalmente imersiva.
+Plataforma de e-commerce voltada para a cultura streetwear, unindo identidade visual, experiência de navegação e funcionalidades completas de uma aplicação web — do catálogo de produtos ao fechamento de pedidos.
 
-<br>
-
-## 🚀 Sobre o Projeto
-
-Nascida da intersecção entre design urbano e desenvolvimento Front-End, a aplicação foi estruturada para demonstrar a criação de vitrines virtuais focadas em performance, transições fluidas e diagramação editorial limpa. 
-
-O projeto conta com uma identidade visual forte (limites nítidos, tipografia *Barlow Condensed* e contraste P&B) e fluxos de navegação completos.
+A proposta visual utiliza uma estética streetwear/editorial, com contraste em preto e branco, tipografia **Barlow Condensed**, limites nítidos e foco em uma experiência de navegação moderna.
 
 ---
 
-## 🖼️ Galeria do Projeto
+## 📸 Galeria
 
 <div align="center">
-  <h3>Vitrine Inicial</h3>
-  <img src="./view1.png" alt="Vitrine inicial DRØP" width="800px">
-  <br><br>
-  <h3>Catálogo de Coleções</h3>
-  <img src="./view2.png" alt="Catálogo collections DRØP" width="800px">
-  <br><br>
-  <h3>Finalização de Compras</h3>
-  <img src="./view3.png" alt="Painel admin DRØP" width="800px">
+
+### Vitrine Inicial
+<img src="./view1.png" alt="Vitrine Inicial" width="700"/>
+
+### Catálogo de Coleções
+<img src="./view2.png" alt="Catálogo de Coleções" width="700"/>
+
+### Finalização de Compras
+<img src="./view3.png" alt="Finalização de Compras" width="700"/>
+
 </div>
----
-
-## 🛠️ Tecnologias e Ferramentas Utilizadas
-
-A estruturação desta interface e a sua arquitetura de apoio contaram com as seguintes tecnologias:
-
-* **Front-End:** HTML5, CSS3, Vanilla JavaScript (sem frameworks, puro domínio da DOM).
-* **Back-End (Arquitetura de Apoio):** FastAPI (Python).
-* **Banco de Dados:** Firebase Firestore.
-* **Assets / Imagens:** Unsplash.
-* **Inspiração Visual / UI:** Pinterest.
 
 ---
 
-## 📂 Estrutura de Ficheiros
+## ✨ Funcionalidades
 
-```bash
+- Exibição de produtos e coleções
+- Consulta de produtos através da API
+- Cadastro, atualização e exclusão de produtos
+- Controle de estoque
+- Carrinho de compras
+- Finalização de pedidos
+- Armazenamento de produtos e pedidos no banco de dados
+- Consulta de pedidos através do número do pedido
+- Integração entre Front-End, Back-End e banco de dados
+
+---
+
+## 🛠️ Tecnologias
+
+| Camada | Tecnologia |
+|---|---|
+| Front-End | HTML5, CSS3, JavaScript Vanilla |
+| Back-End | Python, FastAPI, Uvicorn |
+| Banco de dados | SQLite |
+| Imagens / Assets | Unsplash |
+| Inspiração visual / UI | Pinterest |
+| AI Assistant utilizado no desenvolvimento | Claude |
+
+---
+
+## 🔌 Backend e API
+
+O backend foi desenvolvido com **FastAPI** e faz a comunicação entre a interface e o banco **SQLite**.
+
+### Endpoints de produtos
+```
+GET    /products/
+GET    /products/{id}
+POST   /products/
+PUT    /products/{id}
+DELETE /products/{id}
+```
+
+### Endpoints de pedidos
+```
+POST   /orders/
+GET    /orders/{order_number}
+```
+
+Os pedidos recebem automaticamente um identificador no formato `DRP-XXXXXXXX`.
+
+> Exemplo de teste realizado: `DRP-456E9A74`
+
+---
+
+## 🗄️ Banco de dados
+
+O projeto utiliza **SQLite**.
+
+- **`products`** — armazena nome, descrição, preço, estoque, categoria, imagens, tamanhos e status.
+- **`orders`** — armazena número do pedido, status, data de criação, dados do cliente, forma de pagamento, itens e valor total.
+
+---
+
+## 📁 Estrutura do projeto
+
+```
 drop-ecommerce/
 │
-├── assets/               # Imagens do projeto (view1.png, view2.png, view3.png)
 ├── frontend/
-│   ├── assets/           # Imagens editoriais, fotos de produtos e favicon
-│   ├── css/              # Folhas de estilo / variáveis do projeto
-│   ├── app.js            # Lógica principal (carrinho, fetch de produtos, modais)
-│   ├── index.html        # Página inicial (Hero e Seção New In / Bastidores)
-│   ├── collections.html  # Vitrine de produtos e categorias
-│   ├── checkout.html     # Resumo do pedido e opções de pagamento simuladas
-│   ├── about.html        # Manifesto e créditos da criadora
-│   └── admin.html        # Painel de gerenciamento de categorias
+│   ├── assets/
+│   ├── css/
+│   ├── app.js
+│   ├── index.html
+│   ├── collections.html
+│   ├── checkout.html
+│   └── about.html
+│
+├── backend/
+│   ├── models/
+│   │   └── schemas.py
+│   ├── routes/
+│   │   ├── products.py
+│   │   └── orders.py
+│   ├── database.py
+│   └── main.py
 │
 ├── .gitignore
 ├── README.md
 └── ...
+```
+
+---
+
+## 👤 Sobre
+
+A página **About** apresenta a criadora, a proposta do projeto e os créditos. O DRØP não é apenas uma vitrine visual: por trás da interface existe um backend em **FastAPI/Python** e um banco **SQLite** responsáveis por produtos e pedidos.
+
+---
+
+## 🙌 Créditos
+
+- **Backend:** FastAPI (Python)
+- **Database:** SQLite
+- **AI Assistant:** Claude
+- **Inspiração / UI:** Pinterest
+- **Assets / Imagens:** Unsplash
+
+---
+
+## 🔗 Links da autora
+
+- **LinkedIn:** [linkedin.com/in/adriane-bernardo](https://www.linkedin.com/in/adriane-bernardo/)
+- **GitHub:** [github.com/adrianebernardo](https://github.com/adrianebernardo)
