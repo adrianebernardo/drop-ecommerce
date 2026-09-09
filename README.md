@@ -90,14 +90,14 @@ O projeto utiliza **SQLite**.
 drop-ecommerce/
 │
 ├── frontend/
-│   ├── assets/
-│   ├── css/
-│   ├── app.js
-│   ├── index.html
-│   ├── collections.html
-│   ├── checkout.html
-│   ├── about.html
-│   └── admin.html
+│   ├── assets/              # Imagens dos produtos e favicon
+│   ├── app.js               # Lógica principal do Front-End
+│   ├── style.css            # Estilos da aplicação
+│   ├── index.html           # Página inicial
+│   ├── collections.html     # Vitrine de produtos e coleções
+│   ├── checkout.html        # Carrinho e finalização da compra
+│   ├── about.html           # Informações sobre o projeto
+│   └── admin.html           # Gerenciamento das categorias
 │
 ├── backend/
 │   ├── models/
