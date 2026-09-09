@@ -96,7 +96,8 @@ drop-ecommerce/
 │   ├── index.html
 │   ├── collections.html
 │   ├── checkout.html
-│   └── about.html
+│   ├── about.html
+│   └── admin.html
 │
 ├── backend/
 │   ├── models/
