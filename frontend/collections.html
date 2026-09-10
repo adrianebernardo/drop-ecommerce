@@ -297,243 +297,633 @@
 
   <script>
   const API = 'http://localhost:8001';
-const CART_KEY = 'drop_cart';
-const CATEGORIES = ['TOPS', 'OUTWEAR', 'BOTTOMS', 'FOOTWEAR', 'ACCESSORIES', 'COLLAB', 'SALE'];
+  const CART_KEY = 'drop_cart';
+  const CATEGORIES = [
+    'TOPS',
+    'OUTWEAR',
+    'BOTTOMS',
+    'FOOTWEAR',
+    'ACCESSORIES',
+    'COLLAB',
+    'SALE'
+  ];
 
-let cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
-function saveCart() { localStorage.setItem(CART_KEY, JSON.stringify(cart)); }
+  let cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
 
-async function checkDeepLink() {
-  const id = new URLSearchParams(window.location.search).get('produto');
-  if (!id) return;
-  try {
-    const res = await fetch(`${API}/products/${id}`);
-    const p = await res.json();
-    openModal(p);
-  } catch {}
-}
-
-async function loadProducts() {
-  try {
-    const res = await fetch(`${API}/products/`);
-    const products = await res.json();
-    renderAll(products);
-    checkDeepLink(); // ← aqui, depois de renderizar tudo
-  } catch {
-    document.getElementById('colContent').innerHTML =
-      '<div class="col-loading-full">Erro ao carregar. API está rodando?</div>';
+  function saveCart() {
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
   }
-}
 
-    function renderAll(products) {
-      const grouped = {};
-      CATEGORIES.forEach(c => grouped[c] = []);
+  async function checkDeepLink() {
+    const id = new URLSearchParams(window.location.search).get('produto');
 
-      products.forEach(p => {
-        const cat = (p.category || '').toUpperCase();
-        if (grouped[cat]) grouped[cat].push(p);
-        else {
-          if (!grouped['OUTROS']) grouped['OUTROS'] = [];
-          grouped['OUTROS'].push(p);
+    if (!id) return;
+
+    try {
+      const res = await fetch(`${API}/products/${id}`);
+
+      if (!res.ok) return;
+
+      const product = await res.json();
+      openModal(product);
+    } catch {}
+  }
+
+  async function loadProducts() {
+    try {
+      const res = await fetch(`${API}/products/`);
+
+      if (!res.ok) {
+        throw new Error();
+      }
+
+      const products = await res.json();
+
+      renderAll(products);
+      checkDeepLink();
+
+    } catch {
+      document.getElementById('colContent').innerHTML =
+        '<div class="col-loading-full">Erro ao carregar. API está rodando?</div>';
+    }
+  }
+
+  function renderAll(products) {
+    const grouped = {};
+
+    CATEGORIES.forEach(category => {
+      grouped[category] = [];
+    });
+
+    products.forEach(product => {
+      const category = (product.category || '').toUpperCase();
+
+      if (grouped[category]) {
+        grouped[category].push(product);
+      } else {
+        if (!grouped['OUTROS']) {
+          grouped['OUTROS'] = [];
         }
-      });
 
-      const activeCats = CATEGORIES.filter(c => grouped[c] && grouped[c].length > 0);
-      if (grouped['OUTROS'] && grouped['OUTROS'].length) activeCats.push('OUTROS');
+        grouped['OUTROS'].push(product);
+      }
+    });
 
-      renderSidebar(activeCats, grouped);
-      renderSections(activeCats, grouped);
+    const activeCategories = CATEGORIES.filter(
+      category => grouped[category] && grouped[category].length > 0
+    );
+
+    if (grouped['OUTROS'] && grouped['OUTROS'].length > 0) {
+      activeCategories.push('OUTROS');
     }
 
-    function renderSidebar(cats, grouped) {
-      const sidebar = document.getElementById('sidebar');
-      const links = cats.map(c => `
-        <button class="sidebar-link" onclick="scrollToSection('${c}')" id="link-${c}">
-          ${c}
-          <span class="count">${grouped[c].length}</span>
+    renderSidebar(activeCategories, grouped);
+    renderSections(activeCategories, grouped);
+  }
+
+  function renderSidebar(categories, grouped) {
+    const sidebar = document.getElementById('sidebar');
+
+    const links = categories.map(category => `
+      <button
+        class="sidebar-link"
+        onclick="scrollToSection('${category}')"
+        id="link-${category}"
+      >
+        ${category}
+        <span class="count">${grouped[category].length}</span>
+      </button>
+    `).join('');
+
+    sidebar.innerHTML = `
+      <div class="sidebar-title">Categorias</div>
+      ${links}
+    `;
+  }
+
+  function renderSections(categories, grouped) {
+    const content = document.getElementById('colContent');
+
+    if (!categories.length) {
+      content.innerHTML =
+        '<div class="col-loading-full">Nenhum produto encontrado.</div>';
+      return;
+    }
+
+    content.innerHTML = categories.map(category => `
+      <section class="cat-section" id="section-${category}">
+
+        <div class="cat-header">
+          <span class="cat-header-name">${category}</span>
+
+          <span class="cat-header-count">
+            ${grouped[category].length}
+            ${grouped[category].length === 1 ? 'peça' : 'peças'}
+          </span>
+        </div>
+
+        <div class="cat-grid">
+          ${grouped[category].map(product => `
+            <div
+              class="col-card"
+              onclick="openModal(${JSON.stringify(product).replace(/"/g, '&quot;')})"
+            >
+
+              <div class="col-card-imgwrap">
+                ${
+                  product.image_url
+                    ? `
+                      <img
+                        class="col-card-img"
+                        src="${product.image_url}"
+                        alt="${product.name}"
+                        loading="lazy"
+                      />
+                    `
+                    : `
+                      <div class="col-card-placeholder">
+                        DRØP
+                      </div>
+                    `
+                }
+              </div>
+
+              <div class="col-card-info">
+                <p class="col-card-name">
+                  ${product.name}
+                </p>
+
+                <p class="col-card-price">
+                  R$ ${product.price.toFixed(2).replace('.', ',')}
+                </p>
+              </div>
+
+            </div>
+          `).join('')}
+        </div>
+
+      </section>
+    `).join('');
+
+    setupSectionObserver(categories);
+  }
+
+  function setupSectionObserver(categories) {
+    const observer = new IntersectionObserver(entries => {
+
+      entries.forEach(entry => {
+
+        const id = entry.target.id.replace('section-', '');
+        const link = document.getElementById(`link-${id}`);
+
+        if (link) {
+          link.classList.toggle('active', entry.isIntersecting);
+        }
+
+      });
+
+    }, {
+      threshold: 0.2
+    });
+
+    categories.forEach(category => {
+
+      const section = document.getElementById(
+        `section-${category}`
+      );
+
+      if (section) {
+        observer.observe(section);
+      }
+
+    });
+  }
+
+  function scrollToSection(category) {
+    const section = document.getElementById(
+      `section-${category}`
+    );
+
+    if (section) {
+      section.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  }
+
+  function openModal(product) {
+
+    const images = [];
+
+    if (product.images && product.images.length > 0) {
+
+      product.images
+        .slice(0, 3)
+        .forEach(image => images.push(image));
+
+    } else {
+
+      if (product.image_url) {
+        images.push(product.image_url);
+      }
+
+      if (product.image_product) {
+        images.push(product.image_product);
+      }
+
+    }
+
+    let currentImage = 0;
+
+    function renderCarousel() {
+
+      const imageWrap = document.getElementById('modalImage');
+
+      imageWrap.innerHTML = images.length
+
+        ? `
+          <div style="position:relative;width:100%;height:100%;">
+
+            <img
+              src="${images[currentImage]}"
+              alt=""
+              style="width:100%;height:100%;object-fit:cover;display:block;"
+            />
+
+            ${
+              images.length > 1
+                ? `
+                  <button
+                    id="prevImgBtn"
+                    style="position:absolute;left:0.8rem;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.85);border:none;width:36px;height:36px;font-size:1.1rem;cursor:pointer;"
+                  >
+                    ‹
+                  </button>
+
+                  <button
+                    id="nextImgBtn"
+                    style="position:absolute;right:0.8rem;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.85);border:none;width:36px;height:36px;font-size:1.1rem;cursor:pointer;"
+                  >
+                    ›
+                  </button>
+
+                  <div
+                    style="position:absolute;bottom:0.8rem;left:50%;transform:translateX(-50%);display:flex;gap:0.4rem;"
+                  >
+                    ${images.map((_, index) => `
+                      <span
+                        style="width:6px;height:6px;border-radius:50%;background:${index === currentImage ? '#000' : '#ccc'};display:inline-block;"
+                      ></span>
+                    `).join('')}
+                  </div>
+                `
+                : ''
+            }
+
+          </div>
+        `
+
+        : `<div class="modal-placeholder"></div>`;
+
+      if (images.length > 1) {
+
+        document
+          .getElementById('prevImgBtn')
+          .addEventListener('click', event => {
+
+            event.stopPropagation();
+
+            currentImage =
+              (currentImage - 1 + images.length) % images.length;
+
+            renderCarousel();
+          });
+
+        document
+          .getElementById('nextImgBtn')
+          .addEventListener('click', event => {
+
+            event.stopPropagation();
+
+            currentImage =
+              (currentImage + 1) % images.length;
+
+            renderCarousel();
+          });
+      }
+    }
+
+    renderCarousel();
+
+    document.getElementById('modalName').textContent =
+      product.name;
+
+    document.getElementById('modalDesc').textContent =
+      product.description;
+
+    document.getElementById('modalPrice').textContent =
+      `R$ ${product.price.toFixed(2).replace('.', ',')}`;
+
+    document.getElementById('modalStock').textContent =
+      `${product.stock} unidades disponíveis`;
+
+    const sizesWrap =
+      document.getElementById('modalSizes');
+
+    const hint =
+      document.getElementById('modalSizeHint');
+
+    const addBtn =
+      document.getElementById('modalAdd');
+
+    let selectedSize = null;
+
+    if (product.sizes && product.sizes.length > 0) {
+
+      sizesWrap.innerHTML = product.sizes.map(size => `
+        <button
+          class="size-btn"
+          data-size="${size}"
+        >
+          ${size}
         </button>
       `).join('');
-      sidebar.innerHTML = `<div class="sidebar-title">Categorias</div>${links}`;
 
-      const observer = new IntersectionObserver(entries => {
-        entries.forEach(e => {
-          const id = e.target.id.replace('section-', '');
-          const link = document.getElementById(`link-${id}`);
-          if (link) link.classList.toggle('active', e.isIntersecting);
-        });
-      }, { threshold: 0.2 });
+      sizesWrap
+        .querySelectorAll('.size-btn')
+        .forEach(button => {
 
-      cats.forEach(c => {
-        const el = document.getElementById(`section-${c}`);
-        if (el) observer.observe(el);
-      });
-    }
+          button.addEventListener('click', () => {
 
-    function renderSections(cats, grouped) {
-      const content = document.getElementById('colContent');
-      if (!cats.length) {
-        content.innerHTML = '<div class="col-loading-full">Nenhum produto encontrado.</div>';
-        return;
-      }
-      content.innerHTML = cats.map(c => `
-        <section class="cat-section" id="section-${c}">
-          <div class="cat-header">
-            <span class="cat-header-name">${c}</span>
-            <span class="cat-header-count">${grouped[c].length} ${grouped[c].length === 1 ? 'peça' : 'peças'}</span>
-          </div>
-          <div class="cat-grid">
-            ${grouped[c].map(p => `
-              <div class="col-card" onclick="openModal(${JSON.stringify(p).replace(/"/g, '&quot;')})">
-                <div class="col-card-imgwrap">
-                  ${p.image_url
-                    ? `<img class="col-card-img" src="${p.image_url}" alt="${p.name}" loading="lazy"/>`
-                    : `<div class="col-card-placeholder">DRØP</div>`}
-                </div>
-                <div class="col-card-info">
-                  <p class="col-card-name">${p.name}</p>
-                  <p class="col-card-price">R$ ${p.price.toFixed(2).replace('.', ',')}</p>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        </section>
-      `).join('');
+            sizesWrap
+              .querySelectorAll('.size-btn')
+              .forEach(item =>
+                item.classList.remove('selected')
+              );
 
-      const observer = new IntersectionObserver(entries => {
-        entries.forEach(e => {
-          const id = e.target.id.replace('section-', '');
-          const link = document.getElementById(`link-${id}`);
-          if (link) link.classList.toggle('active', e.isIntersecting);
-        });
-      }, { threshold: 0.2 });
+            button.classList.add('selected');
 
-      cats.forEach(c => {
-        const el = document.getElementById(`section-${c}`);
-        if (el) observer.observe(el);
-      });
-    }
+            selectedSize =
+              button.dataset.size;
 
-    function scrollToSection(cat) {
-      const el = document.getElementById(`section-${cat}`);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+            hint.textContent =
+              `Tamanho: ${selectedSize}`;
 
-    function openModal(p) {
-      const imgs = [];
-      if (p.images && p.images.length > 0) p.images.slice(0, 3).forEach(i => imgs.push(i));
-      else {
-        if (p.image_url) imgs.push(p.image_url);
-        if (p.image_product) imgs.push(p.image_product);
-      }
-      let current = 0;
-      function renderCarousel() {
-        const imgWrap = document.getElementById('modalImage');
-        imgWrap.innerHTML = imgs.length
-          ? `<div style="position:relative;width:100%;height:100%;">
-              <img src="${imgs[current]}" alt="" style="width:100%;height:100%;object-fit:cover;display:block;"/>
-              ${imgs.length > 1 ? `
-                <button id="prevImgBtn" style="position:absolute;left:0.8rem;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.85);border:none;width:36px;height:36px;font-size:1.1rem;cursor:pointer;">‹</button>
-                <button id="nextImgBtn" style="position:absolute;right:0.8rem;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.85);border:none;width:36px;height:36px;font-size:1.1rem;cursor:pointer;">›</button>
-                <div style="position:absolute;bottom:0.8rem;left:50%;transform:translateX(-50%);display:flex;gap:0.4rem;">
-                  ${imgs.map((_, i) => `<span style="width:6px;height:6px;border-radius:50%;background:${i===current?'#000':'#ccc'};display:inline-block;"></span>`).join('')}
-                </div>` : ''}
-            </div>`
-          : `<div class="modal-placeholder"></div>`;
-        if (imgs.length > 1) {
-          document.getElementById('prevImgBtn').addEventListener('click', e => { e.stopPropagation(); current = (current - 1 + imgs.length) % imgs.length; renderCarousel(); });
-          document.getElementById('nextImgBtn').addEventListener('click', e => { e.stopPropagation(); current = (current + 1) % imgs.length; renderCarousel(); });
-        }
-      }
-      renderCarousel();
-      document.getElementById('modalName').textContent = p.name;
-      document.getElementById('modalDesc').textContent = p.description;
-      document.getElementById('modalPrice').textContent = `R$ ${p.price.toFixed(2).replace('.', ',')}`;
-      document.getElementById('modalStock').textContent = `${p.stock} unidades disponíveis`;
-      const sizesWrap = document.getElementById('modalSizes');
-      const hint = document.getElementById('modalSizeHint');
-      const addBtn = document.getElementById('modalAdd');
-      let selectedSize = null;
-      if (p.sizes && p.sizes.length > 0) {
-        sizesWrap.innerHTML = p.sizes.map(s => `<button class="size-btn" data-size="${s}">${s}</button>`).join('');
-        sizesWrap.querySelectorAll('.size-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            sizesWrap.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            selectedSize = btn.dataset.size;
-            hint.textContent = `Tamanho: ${selectedSize}`;
             addBtn.disabled = false;
           });
+
         });
-        addBtn.disabled = true;
-        hint.textContent = 'Selecione um tamanho';
-      } else {
-        sizesWrap.innerHTML = ''; hint.textContent = '';
-        addBtn.disabled = false; selectedSize = 'ÚNICO';
-      }
-      addBtn.onclick = () => { addToCart(p, selectedSize); closeModal(); };
-      document.getElementById('modalOverlay').classList.add('active');
+
+      addBtn.disabled = true;
+
+      hint.textContent =
+        'Selecione um tamanho';
+
+    } else {
+
+      sizesWrap.innerHTML = '';
+      hint.textContent = '';
+
+      addBtn.disabled = false;
+
+      selectedSize = 'ÚNICO';
     }
 
-    function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
-    document.getElementById('modalClose').onclick = closeModal;
-    document.getElementById('modalOverlay').onclick = e => { if (e.target === e.currentTarget) closeModal(); };
+    addBtn.onclick = () => {
 
-    function addToCart(p, size) {
-      const key = `${p.id}_${size}`;
-      const existing = cart.find(i => i._key === key);
-      if (existing) { existing.qty++; existing.quantity = existing.qty; }
-      else cart.push({ ...p, image: p.image_url || p.image_product || '', qty: 1, quantity: 1, size, _key: key });
-      saveCart(); updateCart(); openCart();
-    }
+      addToCart(product, selectedSize);
 
-    function updateCart() {
-      const count = cart.reduce((s, i) => s + i.qty, 0);
-      const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
-      document.getElementById('cartCount').textContent = count;
-      document.getElementById('cartTotal').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
-      document.getElementById('cartItems').innerHTML = cart.length
-        ? cart.map(i => `
-            <div class="cart-item">
-              <div class="cart-item-info">
-                <p class="cart-item-name">${i.name}${i.size && i.size !== 'ÚNICO' ? ` <span style="font-weight:400;color:#aaa">/ ${i.size}</span>` : ''}</p>
-                <p class="cart-item-price">R$ ${(i.price * i.qty).toFixed(2).replace('.', ',')}</p>
-              </div>
-              <div class="cart-item-controls">
-                <button onclick="changeQty('${i._key}', -1)">−</button>
-                <span>${i.qty}</span>
-                <button onclick="changeQty('${i._key}', 1)">+</button>
-              </div>
-            </div>`).join('')
-        : '<p style="color:#999;font-size:.85rem;letter-spacing:2px;">Seu bag está vazio.</p>';
-    }
-
-    function changeQty(key, delta) {
-      const item = cart.find(i => i._key === key);
-      if (!item) return;
-      item.qty += delta; item.quantity = item.qty;
-      if (item.qty <= 0) cart = cart.filter(i => i._key !== key);
-      saveCart(); updateCart();
-    }
-
-    function openCart() {
-      document.getElementById('cart').classList.add('active');
-      document.getElementById('cartOverlay').classList.add('active');
-    }
-    function closeCart() {
-      document.getElementById('cart').classList.remove('active');
-      document.getElementById('cartOverlay').classList.remove('active');
-    }
-
-    document.getElementById('cartBtn').onclick = openCart;
-    document.getElementById('closeCart').onclick = closeCart;
-    document.getElementById('cartOverlay').onclick = closeCart;
-    document.getElementById('checkoutBtn').onclick = () => {
-      if (!cart.length) return;
-      closeCart(); window.location.href = 'checkout.html';
+      closeModal();
     };
 
+    document
+      .getElementById('modalOverlay')
+      .classList.add('active');
+  }
+
+  function closeModal() {
+    document
+      .getElementById('modalOverlay')
+      .classList.remove('active');
+  }
+
+  document
+    .getElementById('modalClose')
+    .onclick = closeModal;
+
+  document
+    .getElementById('modalOverlay')
+    .onclick = event => {
+
+      if (event.target === event.currentTarget) {
+        closeModal();
+      }
+
+    };
+
+
+  // CARRINHO
+  function addToCart(product, size) {
+
+    if (product.stock <= 0) {
+      return;
+    }
+
+    const key = `${product.id}_${size}`;
+
+    const existing = cart.find(
+      item => item._key === key
+    );
+
+    if (existing) {
+
+      if (existing.qty >= product.stock) {
+        return;
+      }
+
+      existing.qty++;
+      existing.quantity = existing.qty;
+
+    } else {
+
+      cart.push({
+        ...product,
+        image: product.image_url || product.image_product || '',
+        qty: 1,
+        quantity: 1,
+        size,
+        _key: key
+      });
+
+    }
+
+    saveCart();
     updateCart();
-    loadProducts();
-  </script>
+    openCart();
+  }
+
+
+  function updateCart() {
+
+    const count = cart.reduce(
+      (sum, item) => sum + item.qty,
+      0
+    );
+
+    const total = cart.reduce(
+      (sum, item) => sum + item.price * item.qty,
+      0
+    );
+
+    document.getElementById('cartCount').textContent =
+      count;
+
+    document.getElementById('cartTotal').textContent =
+      `R$ ${total.toFixed(2).replace('.', ',')}`;
+
+    document.getElementById('cartItems').innerHTML =
+      cart.length
+
+        ? cart.map(item => `
+            <div class="cart-item">
+
+              <div class="cart-item-info">
+
+                <p class="cart-item-name">
+                  ${item.name}
+
+                  ${
+                    item.size && item.size !== 'ÚNICO'
+                      ? `
+                        <span style="font-weight:400;color:#aaa">
+                          / ${item.size}
+                        </span>
+                      `
+                      : ''
+                  }
+                </p>
+
+                <p class="cart-item-price">
+                  R$ ${(item.price * item.qty)
+                    .toFixed(2)
+                    .replace('.', ',')}
+                </p>
+
+              </div>
+
+              <div class="cart-item-controls">
+
+                <button
+                  onclick="changeQty('${item._key}', -1)"
+                >
+                  −
+                </button>
+
+                <span>${item.qty}</span>
+
+                <button
+                  onclick="changeQty('${item._key}', 1)"
+                >
+                  +
+                </button>
+
+              </div>
+
+            </div>
+          `).join('')
+
+        : `
+          <p style="color:#999;font-size:.85rem;letter-spacing:2px;">
+            Seu bag está vazio.
+          </p>
+        `;
+  }
+
+
+  function changeQty(key, delta) {
+
+    const item = cart.find(
+      product => product._key === key
+    );
+
+    if (!item) {
+      return;
+    }
+
+    // Impede ultrapassar o estoque disponível
+    if (delta > 0 && item.qty >= item.stock) {
+      return;
+    }
+
+    item.qty += delta;
+    item.quantity = item.qty;
+
+    if (item.qty <= 0) {
+      cart = cart.filter(
+        product => product._key !== key
+      );
+    }
+
+    saveCart();
+    updateCart();
+  }
+
+
+  function openCart() {
+
+    document
+      .getElementById('cart')
+      .classList.add('active');
+
+    document
+      .getElementById('cartOverlay')
+      .classList.add('active');
+  }
+
+
+  function closeCart() {
+
+    document
+      .getElementById('cart')
+      .classList.remove('active');
+
+    document
+      .getElementById('cartOverlay')
+      .classList.remove('active');
+  }
+
+
+  document
+    .getElementById('cartBtn')
+    .onclick = openCart;
+
+  document
+    .getElementById('closeCart')
+    .onclick = closeCart;
+
+  document
+    .getElementById('cartOverlay')
+    .onclick = closeCart;
+
+
+  document
+    .getElementById('checkoutBtn')
+    .onclick = () => {
+
+      if (!cart.length) {
+        return;
+      }
+
+      closeCart();
+
+      window.location.href =
+        'checkout.html';
+    };
+
+
+  updateCart();
+  loadProducts();
+ </script>
 </body>
 </html>
