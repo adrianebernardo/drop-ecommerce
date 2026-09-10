@@ -536,85 +536,152 @@
 
     let currentImage = 0;
 
-    function renderCarousel() {
+    function renderCarousel(direction = 1) {
 
-      const imageWrap = document.getElementById('modalImage');
+  const imageWrap = document.getElementById('modalImage');
 
-      imageWrap.innerHTML = images.length
+  if (!images.length) {
+    imageWrap.innerHTML =
+      `<div class="modal-placeholder"></div>`;
+    return;
+  }
 
-        ? `
-          <div style="position:relative;width:100%;height:100%;">
+  imageWrap.innerHTML = `
+    <div
+      class="carousel-frame"
+      style="
+        position:relative;
+        width:100%;
+        height:100%;
+        overflow:hidden;
+        background:#f2f2f0;
+      "
+    >
 
-            <img
-              src="${images[currentImage]}"
-              alt=""
-              style="width:100%;height:100%;object-fit:cover;display:block;"
-            />
+      <img
+        class="carousel-image"
+        src="${images[currentImage]}"
+        alt=""
+        style="
+          width:100%;
+          height:100%;
+          object-fit:cover;
+          display:block;
+          transform:translateX(${direction > 0 ? '100%' : '-100%'});
+          opacity:0;
+        "
+      />
 
-            ${
-              images.length > 1
-                ? `
-                  <button
-                    id="prevImgBtn"
-                    style="position:absolute;left:0.8rem;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.85);border:none;width:36px;height:36px;font-size:1.1rem;cursor:pointer;"
-                  >
-                    ‹
-                  </button>
+      ${
+        images.length > 1
+          ? `
+            <button
+              id="prevImgBtn"
+              style="
+                position:absolute;
+                left:0.8rem;
+                top:50%;
+                transform:translateY(-50%);
+                background:rgba(255,255,255,0.85);
+                border:none;
+                width:36px;
+                height:36px;
+                font-size:1.1rem;
+                cursor:pointer;
+                z-index:2;
+              "
+            >
+              ‹
+            </button>
 
-                  <button
-                    id="nextImgBtn"
-                    style="position:absolute;right:0.8rem;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.85);border:none;width:36px;height:36px;font-size:1.1rem;cursor:pointer;"
-                  >
-                    ›
-                  </button>
+            <button
+              id="nextImgBtn"
+              style="
+                position:absolute;
+                right:0.8rem;
+                top:50%;
+                transform:translateY(-50%);
+                background:rgba(255,255,255,0.85);
+                border:none;
+                width:36px;
+                height:36px;
+                font-size:1.1rem;
+                cursor:pointer;
+                z-index:2;
+              "
+            >
+              ›
+            </button>
 
-                  <div
-                    style="position:absolute;bottom:0.8rem;left:50%;transform:translateX(-50%);display:flex;gap:0.4rem;"
-                  >
-                    ${images.map((_, index) => `
-                      <span
-                        style="width:6px;height:6px;border-radius:50%;background:${index === currentImage ? '#000' : '#ccc'};display:inline-block;"
-                      ></span>
-                    `).join('')}
-                  </div>
-                `
-                : ''
-            }
-
-          </div>
-        `
-
-        : `<div class="modal-placeholder"></div>`;
-
-      if (images.length > 1) {
-
-        document
-          .getElementById('prevImgBtn')
-          .addEventListener('click', event => {
-
-            event.stopPropagation();
-
-            currentImage =
-              (currentImage - 1 + images.length) % images.length;
-
-            renderCarousel();
-          });
-
-        document
-          .getElementById('nextImgBtn')
-          .addEventListener('click', event => {
-
-            event.stopPropagation();
-
-            currentImage =
-              (currentImage + 1) % images.length;
-
-            renderCarousel();
-          });
+            <div
+              style="
+                position:absolute;
+                bottom:0.8rem;
+                left:50%;
+                transform:translateX(-50%);
+                display:flex;
+                gap:0.4rem;
+                z-index:2;
+              "
+            >
+              ${images.map((_, index) => `
+                <span
+                  style="
+                    width:6px;
+                    height:6px;
+                    border-radius:50%;
+                    background:${index === currentImage ? '#000' : '#ccc'};
+                    display:inline-block;
+                  "
+                ></span>
+              `).join('')}
+            </div>
+          `
+          : ''
       }
-    }
 
-    renderCarousel();
+    </div>
+  `;
+
+  const image = imageWrap.querySelector('.carousel-image');
+
+  requestAnimationFrame(() => {
+    image.style.transition =
+      'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease';
+
+    image.style.transform = 'translateX(0)';
+    image.style.opacity = '1';
+  });
+
+  if (images.length > 1) {
+
+    document
+      .getElementById('prevImgBtn')
+      .addEventListener('click', event => {
+
+        event.stopPropagation();
+
+        currentImage =
+          (currentImage - 1 + images.length) % images.length;
+
+        renderCarousel(-1);
+      });
+
+    document
+      .getElementById('nextImgBtn')
+      .addEventListener('click', event => {
+
+        event.stopPropagation();
+
+        currentImage =
+          (currentImage + 1) % images.length;
+
+        renderCarousel(1);
+      });
+  }
+}
+
+    renderCarousel(1);
 
     document.getElementById('modalName').textContent =
       product.name;
